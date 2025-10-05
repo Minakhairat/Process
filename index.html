@@ -1,0 +1,2040 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام البطاقات التعليمية المتقدم للعمليات الإنتاجية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --card-height: 420px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .language-toggle {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .lang-btn {
+            background: var(--light-color);
+            border: none;
+            padding: 8px 16px;
+            margin: 0 5px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: bold;
+        }
+
+        .lang-btn.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 30px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-box:focus {
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+        }
+
+        .category-filter {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .category-btn {
+            background: var(--light-color);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: bold;
+        }
+
+        .category-btn.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: var(--transition);
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            height: var(--card-height);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .card-back {
+            background: white;
+            color: var(--dark-color);
+            transform: rotateY(180deg);
+            overflow-y: auto;
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .card-content {
+            width: 100%;
+        }
+
+        .card-content h3 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--light-color);
+            padding-bottom: 5px;
+        }
+
+        .card-content ul {
+            list-style-type: none;
+            margin-bottom: 15px;
+        }
+
+        .card-content li {
+            margin-bottom: 8px;
+            position: relative;
+            padding-right: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .card-content li:hover {
+            color: var(--secondary-color);
+            transform: translateX(-5px);
+        }
+
+        .card-content li:before {
+            content: "•";
+            color: var(--accent-color);
+            font-weight: bold;
+            position: absolute;
+            right: 0;
+        }
+
+        .card-category {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        /* تفاصيل النقاط */
+        .detail-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .detail-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .close-detail {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .detail-title {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.8rem;
+        }
+
+        .detail-body {
+            line-height: 1.8;
+        }
+
+        .detail-body h3 {
+            color: var(--secondary-color);
+            margin: 20px 0 10px 0;
+        }
+
+        .detail-body h4 {
+            color: var(--primary-color);
+            margin: 15px 0 8px 0;
+        }
+
+        .detail-body ul {
+            margin: 10px 0 20px 20px;
+        }
+
+        .detail-body li {
+            margin-bottom: 8px;
+        }
+
+        .example-box {
+            background: #f8f9fa;
+            border-left: 4px solid var(--secondary-color);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .formula-box {
+            background: #e8f4f8;
+            border: 1px solid var(--secondary-color);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+
+        .tip-box {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning-color);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .copyright {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+            
+            .card {
+                height: 400px;
+            }
+
+            .detail-content {
+                padding: 20px;
+                margin: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .card {
+                height: 380px;
+            }
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: #666;
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="ar">نظام البطاقات التعليمية المتقدم للعمليات الإنتاجية</h1>
+            <h1 class="en" style="display: none;">Advanced Production Processes Educational Cards System</h1>
+            <p class="subtitle ar">مادة تعليمية شاملة لمهندسي العمليات والمشرفين والفنيين وعمال الإنتاج</p>
+            <p class="subtitle en" style="display: none;">Comprehensive educational material for process engineers, supervisors, technicians, and production workers</p>
+            
+            <div class="language-toggle">
+                <button class="lang-btn active" data-lang="ar">العربية</button>
+                <button class="lang-btn" data-lang="en">English</button>
+            </div>
+
+            <div class="search-container">
+                <input type="text" class="search-box ar" placeholder="ابحث في البطاقات التعليمية...">
+                <input type="text" class="search-box en" placeholder="Search in educational cards..." style="display: none;">
+            </div>
+
+            <div class="category-filter">
+                <button class="category-btn active" data-category="all">الكل</button>
+                <button class="category-btn" data-category="management">الإدارة</button>
+                <button class="category-btn" data-category="quality">الجودة</button>
+                <button class="category-btn" data-category="productivity">الإنتاجية</button>
+                <button class="category-btn" data-category="improvement">التطوير</button>
+                <button class="category-btn" data-category="tools">الأدوات</button>
+                <button class="category-btn" data-category="maintenance">الصيانة</button>
+            </div>
+        </header>
+        
+        <main>
+            <div class="cards-grid" id="cardsContainer">
+                <!-- سيتم إضافة البطاقات ديناميكياً باستخدام JavaScript -->
+            </div>
+        </main>
+        
+        <footer>
+            <p class="ar">تم تطويره لتطوير الأداء في العمليات الإنتاجية © 2025</p>
+            <p class="en" style="display: none;">Developed for performance improvement in production processes © 2025</p>
+            <p class="copyright ar">جميع الحقوق محفوظة للمهندس Mina Khairat</p>
+            <p class="copyright en" style="display: none;">All rights reserved to Engineer Mina Khairat</p>
+        </footer>
+    </div>
+
+    <!-- نافذة التفاصيل -->
+    <div class="detail-overlay" id="detailOverlay">
+        <div class="detail-content">
+            <button class="close-detail" id="closeDetail">×</button>
+            <h2 class="detail-title" id="detailTitle"></h2>
+            <div class="detail-body" id="detailBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // بيانات البطاقات الموسعة (15 بطاقة)
+        const cardsData = [
+            {
+                id: 1,
+                category: "management",
+                title: {
+                    ar: "إدارة العمليات",
+                    en: "Operations Management"
+                },
+                icon: "🏭",
+                description: {
+                    ar: "التخطيط والتنفيذ والرقابة على العمليات الإنتاجية",
+                    en: "Planning, execution and control of production operations"
+                },
+                content: {
+                    ar: `
+                        <h3>إدارة العمليات</h3>
+                        <p>إدارة العمليات هي أسلوب منظم لتحليل، تخطيط، تنفيذ، متابعة وتحسين أنشطة العمليات لتحقيق أهداف محددة.</p>
+                        
+                        <h3>أركان إدارة العمليات الخمسة:</h3>
+                        <ul>
+                            <li data-detail="analysis">التحليل - فهم العمليات الحالية والمتطلبات</li>
+                            <li data-detail="planning">التخطيط - وضع الخطط والاستراتيجيات</li>
+                            <li data-detail="execution">التنفيذ - تنفيذ الخطط والبرامج</li>
+                            <li data-detail="monitoring">المتابعة - متابعة الأداء والنتائج</li>
+                            <li data-detail="improvement">التطوير - تحسين العمليات المستمر</li>
+                        </ul>
+                        
+                        <h3>عناصر العملية الإنتاجية:</h3>
+                        <p>المدخلات ← العملية ← المخرجات ← النتائج</p>
+                        
+                        <h3>الموارد الأساسية (5M):</h3>
+                        <ul>
+                            <li data-detail="materials">المواد (Materials)</li>
+                            <li data-detail="manpower">الأيدي العاملة (Manpower)</li>
+                            <li data-detail="machines">الآلات (Machines)</li>
+                            <li data-detail="methods">الأساليب (Methods)</li>
+                            <li data-detail="money">الأموال (Money)</li>
+                        </ul>
+                    `,
+                    en: `
+                        <h3>Operations Management</h3>
+                        <p>Operations Management is a systematic approach for analysis, planning, execution, control and improvement of operation activities to achieve specific objectives.</p>
+                        
+                        <h3>Five Pillars of Operations Management:</h3>
+                        <ul>
+                            <li data-detail="analysis">Analysis - Understanding current processes and requirements</li>
+                            <li data-detail="planning">Planning - Developing plans and strategies</li>
+                            <li data-detail="execution">Execution - Implementing plans and programs</li>
+                            <li data-detail="monitoring">Control - Monitoring performance and results</li>
+                            <li data-detail="improvement">Improvement - Continuous process improvement</li>
+                        </ul>
+                        
+                        <h3>Production Process Elements:</h3>
+                        <p>Inputs ← Process ← Outputs ← Outcomes</p>
+                        
+                        <h3>Basic Resources (5M):</h3>
+                        <ul>
+                            <li data-detail="materials">Materials</li>
+                            <li data-detail="manpower">Manpower</li>
+                            <li data-detail="machines">Machines</li>
+                            <li data-detail="methods">Methods</li>
+                            <li data-detail="money">Money</li>
+                        </ul>
+                    `
+                },
+                details: {
+                    analysis: {
+                        ar: {
+                            title: "التحليل في إدارة العمليات",
+                            content: `
+                                <h3>التحليل في إدارة العمليات</h3>
+                                <p>التحليل هو المرحلة الأولى والأساسية في إدارة العمليات، حيث يتم دراسة وفهم العمليات الحالية والمتطلبات المستقبلية.</p>
+                                
+                                <h3>أهداف التحليل:</h3>
+                                <ul>
+                                    <li>فهم العمليات الحالية وتحديد نقاط القوة والضعف</li>
+                                    <li>تحليل احتياجات العملاء والمتطلبات السوقية</li>
+                                    <li>دراسة القدرات الإنتاجية والمعدات المتاحة</li>
+                                    <li>تحليل تكاليف العمليات والعوائد المتوقعة</li>
+                                    <li>تحديد معايير الأداء والمؤشرات الرئيسية</li>
+                                </ul>
+                                
+                                <h3>أدوات التحليل:</h3>
+                                <ul>
+                                    <li>خرائط تدفق العمليات (Process Flow Charts)</li>
+                                    <li>تحليل القيمة المضافة (Value Added Analysis)</li>
+                                    <li>دراسة الوقت والحركة (Time and Motion Study)</li>
+                                    <li>تحليل البيانات الإحصائية</li>
+                                    <li>مقابلات مع العاملين والخبراء</li>
+                                </ul>
+                                
+                                <div class="example-box">
+                                    <h4>مثال عملي:</h4>
+                                    <p>في مصنع لإنتاج الأثاث، يتم تحليل عملية التصنيع من خلال:</p>
+                                    <ul>
+                                        <li>قياس الوقت المستغرق في كل مرحلة من مراحل الإنتاج</li>
+                                        <li>تحليل نسبة الهدر في المواد الخام</li>
+                                        <li>دراسة كفاءة العمال والمعدات</li>
+                                        <li>تحديد نقاط الاختناق في خط الإنتاج</li>
+                                    </ul>
+                                    <p>النتيجة: تحسين كفاءة الإنتاج بنسبة 25% وتقليل الهدر بنسبة 15%.</p>
+                                </div>
+                                
+                                <h3>خطوات التحليل الناجح:</h3>
+                                <ol>
+                                    <li>جمع البيانات والمعلومات الدقيقة</li>
+                                    <li>تحليل البيانات باستخدام الأساليب الإحصائية</li>
+                                    <li>تحديد المشكلات والتحديات الرئيسية</li>
+                                    <li>وضع التوصيات والحلول المناسبة</li>
+                                    <li>تقديم التقارير ونتائج التحليل للإدارة</li>
+                                </ol>
+                            `
+                        },
+                        en: {
+                            title: "Analysis in Operations Management",
+                            content: `
+                                <h3>Analysis in Operations Management</h3>
+                                <p>Analysis is the first and fundamental stage in operations management, where current processes and future requirements are studied and understood.</p>
+                                
+                                <h3>Analysis Objectives:</h3>
+                                <ul>
+                                    <li>Understanding current processes and identifying strengths and weaknesses</li>
+                                    <li>Analyzing customer needs and market requirements</li>
+                                    <li>Studying production capabilities and available equipment</li>
+                                    <li>Analyzing operational costs and expected returns</li>
+                                    <li>Identifying performance standards and key indicators</li>
+                                </ul>
+                                
+                                <h3>Analysis Tools:</h3>
+                                <ul>
+                                    <li>Process Flow Charts</li>
+                                    <li>Value Added Analysis</li>
+                                    <li>Time and Motion Study</li>
+                                    <li>Statistical Data Analysis</li>
+                                    <li>Interviews with workers and experts</li>
+                                </ul>
+                                
+                                <div class="example-box">
+                                    <h4>Practical Example:</h4>
+                                    <p>In a furniture manufacturing plant, the manufacturing process is analyzed through:</p>
+                                    <ul>
+                                        <li>Measuring time spent in each production stage</li>
+                                        <li>Analyzing waste percentage in raw materials</li>
+                                        <li>Studying efficiency of workers and equipment</li>
+                                        <li>Identifying bottlenecks in the production line</li>
+                                    </ul>
+                                    <p>Result: Improving production efficiency by 25% and reducing waste by 15%.</p>
+                                </div>
+                                
+                                <h3>Steps for Successful Analysis:</h3>
+                                <ol>
+                                    <li>Collect accurate data and information</li>
+                                    <li>Analyze data using statistical methods</li>
+                                    <li>Identify main problems and challenges</li>
+                                    <li>Develop appropriate recommendations and solutions</li>
+                                    <li>Present analysis reports and results to management</li>
+                                </ol>
+                            `
+                        }
+                    },
+                    planning: {
+                        ar: {
+                            title: "التخطيط في إدارة العمليات",
+                            content: `
+                                <h3>التخطيط في إدارة العمليات</h3>
+                                <p>التخطيط هو عملية وضع الأهداف وتحديد الوسائل والموارد اللازمة لتحقيق هذه الأهداف بكفاءة وفعالية.</p>
+                                
+                                <h3>أنواع التخطيط:</h3>
+                                <ul>
+                                    <li><strong>التخطيط الاستراتيجي:</strong> طويل الأجل (3-10 سنوات) - يحدد الاتجاه العام للمنظمة</li>
+                                    <li><strong>التخطيط التكتيكي:</strong> متوسط الأجل (1-2 سنوات) - يترجم الاستراتيجية إلى خطط عملية</li>
+                                    <li><strong>التخطيط التشغيلي:</strong> قصير الأجل (يومي، أسبوعي، شهري) - ينفذ الخطط على أرض الواقع</li>
+                                </ul>
+                                
+                                <h3>عناصر خطة العمليات الناجحة:</h3>
+                                <ul>
+                                    <li><strong>الأهداف:</strong> محددة، قابلة للقياس، قابلة للتحقيق، واقعية، محددة زمنياً (SMART)</li>
+                                    <li><strong>الموارد:</strong> المواد، العمالة، المعدات، التكنولوجيا، الميزانية</li>
+                                    <li><strong>الجدول الزمني:</strong> تواريخ البدء والانتهاء، المراحل الرئيسية</li>
+                                    <li><strong>المسؤوليات:</strong> توزيع المهام والمسؤوليات</li>
+                                    <li><strong>مؤشرات الأداء:</strong> مقاييس لقياس التقدم والنجاح</li>
+                                </ul>
+                                
+                                <div class="example-box">
+                                    <h4>مثال عملي: تخطيط الإنتاج في مصنع السيارات</h4>
+                                    <p><strong>الهدف:</strong> إنتاج 1000 سيارة شهرياً بنسبة عيوب لا تزيد عن 2%</p>
+                                    <p><strong>الخطة:</strong></p>
+                                    <ul>
+                                        <li>المواد: توفير 500 طن من الصلب شهرياً</li>
+                                        <li>العمالة: 200 عامل بمناوبة واحدة، 8 ساعات/يوم</li>
+                                        <li>المعدات: 5 خطوط إنتاج، صيانة دورية أسبوعية</li>
+                                        <li>الجودة: فحص 100% للمنتج النهائي، عينات عشوائية أثناء الإنتاج</li>
+                                        <li>التكلفة: ميزانية 5 مليون جنيه شهرياً</li>
+                                    </ul>
+                                    <p><strong>النتيجة:</strong> تحقيق 98% من الهدف الشهري مع نسبة عيوب 1.5% فقط.</p>
+                                </div>
+                                
+                                <h3>أدوات التخطيط:</h3>
+                                <ul>
+                                    <li>مخطط جانت (Gantt Chart) - لتخطيط المشاريع والأنشطة</li>
+                                    <li>تحليل الشبكات (Network Analysis) - لتحسين تتابع الأنشطة</li>
+                                    <li>التخطيط بالسيناريوهات (Scenario Planning) - للاستعداد للمستقبل</li>
+                                    <li>نماذج المحاكاة (Simulation Models) - لاختبار الخطط قبل التنفيذ</li>
+                                </ul>
+                                
+                                <h3>مبادئ التخطيط الفعال:</h3>
+                                <ol>
+                                    <li>الواقعية والمرونة</li>
+                                    <li>المشاركة والشفافية</li>
+                                    <li>الاستناد إلى البيانات والحقائق</li>
+                                    <li>التكامل مع الخطط الأخرى</li>
+                                    <li>المتابعة والتقييم المستمر</li>
+                                </ol>
+                            `
+                        },
+                        en: {
+                            title: "Planning in Operations Management",
+                            content: `
+                                <h3>Planning in Operations Management</h3>
+                                <p>Planning is the process of setting objectives and determining the means and resources needed to achieve these objectives efficiently and effectively.</p>
+                                
+                                <h3>Types of Planning:</h3>
+                                <ul>
+                                    <li><strong>Strategic Planning:</strong> Long-term (3-10 years) - Defines the organization's general direction</li>
+                                    <li><strong>Tactical Planning:</strong> Medium-term (1-2 years) - Translates strategy into practical plans</li>
+                                    <li><strong>Operational Planning:</strong> Short-term (daily, weekly, monthly) - Implements plans on the ground</li>
+                                </ul>
+                                
+                                <h3>Elements of a Successful Operations Plan:</h3>
+                                <ul>
+                                    <li><strong>Objectives:</strong> Specific, Measurable, Achievable, Realistic, Time-bound (SMART)</li>
+                                    <li><strong>Resources:</strong> Materials, Labor, Equipment, Technology, Budget</li>
+                                    <li><strong>Schedule:</strong> Start and end dates, Key milestones</li>
+                                    <li><strong>Responsibilities:</strong> Task and responsibility distribution</li>
+                                    <li><strong>Performance Indicators:</strong> Measures to track progress and success</li>
+                                </ul>
+                                
+                                <div class="example-box">
+                                    <h4>Practical Example: Production Planning in an Automobile Factory</h4>
+                                    <p><strong>Objective:</strong> Produce 1000 cars monthly with defect rate not exceeding 2%</p>
+                                    <p><strong>Plan:</strong></p>
+                                    <ul>
+                                        <li>Materials: Provide 500 tons of steel monthly</li>
+                                        <li>Labor: 200 workers in one shift, 8 hours/day</li>
+                                        <li>Equipment: 5 production lines, weekly maintenance</li>
+                                        <li>Quality: 100% final product inspection, random samples during production</li>
+                                        <li>Cost: Budget of 5 million pounds monthly</li>
+                                    </ul>
+                                    <p><strong>Result:</strong> Achieving 98% of monthly target with only 1.5% defect rate.</p>
+                                </div>
+                                
+                                <h3>Planning Tools:</h3>
+                                <ul>
+                                    <li>Gantt Chart - For project and activity planning</li>
+                                    <li>Network Analysis - For optimizing activity sequencing</li>
+                                    <li>Scenario Planning - For future preparedness</li>
+                                    <li>Simulation Models - For testing plans before implementation</li>
+                                </ul>
+                                
+                                <h3>Principles of Effective Planning:</h3>
+                                <ol>
+                                    <li>Realism and flexibility</li>
+                                    <li>Participation and transparency</li>
+                                    <li>Data and fact-based</li>
+                                    <li>Integration with other plans</li>
+                                    <li>Continuous monitoring and evaluation</li>
+                                </ol>
+                            `
+                        }
+                    },
+                    // يمكن إضافة المزيد من التفاصيل هنا
+                    materials: {
+                        ar: {
+                            title: "إدارة المواد في العمليات الإنتاجية",
+                            content: `
+                                <h3>إدارة المواد في العمليات الإنتاجية</h3>
+                                <p>تشمل إدارة المواد جميع الأنشطة المتعلقة بتخطيط، شراء، تخزين، وتحكم في تدفق المواد الخام والمنتجات خلال سلسلة التوريد.</p>
+                                
+                                <h3>مكونات إدارة المواد:</h3>
+                                <ul>
+                                    <li><strong>التخطيط للمواد:</strong> التنبؤ بالطلب، تحديد الكميات المطلوبة</li>
+                                    <li><strong>الشراء:</strong> اختيار الموردين، التفاوض على الأسعار</li>
+                                    <li><strong>التخزين:</strong> إدارة المستودعات، ترتيب المواد</li>
+                                    <li><strong>التحكم في المخزون:</strong> مراقبة المستويات، منع النفاد أو التكدس</li>
+                                    <li><strong>إدارة النقل:</strong> تنظيم نقل المواد داخلياً وخارجياً</li>
+                                </ul>
+                                
+                                <h3>تقنيات إدارة المخزون المتقدمة:</h3>
+                                <ul>
+                                    <li><strong>نظام JIT:</strong> التسليم في الوقت المناسب لتقليل المخزون</li>
+                                    <li><strong>تحليل ABC:</strong> تصنيف المواد حسب الأهمية والقيمة</li>
+                                    <li><strong>نقطة إعادة الطلب:</strong> تحديد المستوى الأمثل لإعادة الطلب</li>
+                                    <li><strong>نظام MRP:</strong> تخطيط متطلبات المواد باستخدام الحاسوب</li>
+                                    <li><strong>نظام ERP:</strong> التكامل الشامل لإدارة الموارد</li>
+                                </ul>
+                                
+                                <div class="example-box">
+                                    <h4>مثال عملي: إدارة المواد في مصنع الأجهزة الإلكترونية</h4>
+                                    <p><strong>التحدي:</strong> ارتفاع تكاليف المخزون وتكرار نفاد المواد الحرجة</p>
+                                    <p><strong>الحل:</strong> تطبيق نظام متكامل لإدارة المواد:</p>
+                                    <ul>
+                                        <li>تحليل ABC: تصنيف 1500 صنف إلى:
+                                            <ul>
+                                                <li>فئة A (20% من الأصناف، 80% من القيمة) - مراقبة يومية</li>
+                                                <li>فئة B (30% من الأصناف، 15% من القيمة) - مراقبة أسبوعية</li>
+                                                <li>فئة C (50% من الأصناف، 5% من القيمة) - مراقبة شهرية</li>
+                                            </ul>
+                                        </li>
+                                        <li>نظام JIT للمواد عالية القيمة</li>
+                                        <li>اتفاقيات إطارية مع الموردين الرئيسيين</li>
+                                        <li>نظام تتبع إلكتروني للمخزون</li>
+                                    </ul>
+                                    <p><strong>النتائج:</strong> خفض تكاليف المخزون 35%، تقليل نفاد المواد 90%، تحسين تدفق الإنتاج 25%.</p>
+                                </div>
+                                
+                                <h3>مؤشرات أداء إدارة المواد:</h3>
+                                <ul>
+                                    <li>معدل دوران المخزون = تكلفة البضاعة المباعة ÷ متوسط المخزون</li>
+                                    <li>أيام المخزون = 365 ÷ معدل دوران المخزون</li>
+                                    <li>نسبة توفر المواد = (الطلبات المكتملة ÷ إجمالي الطلبات) × 100</li>
+                                    <li>تكلفة الاحتفاظ بالمخزون كنسبة مئوية من قيمة المخزون</li>
+                                    <li>دقة سجلات المخزون = (1 - [الفرق بين المخزون الفعلي والمسجل ÷ المخزون الفعلي]) × 100</li>
+                                </ul>
+                                
+                                <h3>أفضل الممارسات في إدارة المواد:</h3>
+                                <ol>
+                                    <li>التكامل مع الموردين والشركاء في سلسلة التوريد</li>
+                                    <li>استخدام التكنولوجيا والأنظمة الآلية</li>
+                                    <li>التدريب المستمر للعاملين في إدارة المواد</li>
+                                    <li>المراجعة الدورية للسياسات والإجراءات</li>
+                                    <li>التحسين المستمر بناءً على البيانات والأداء</li>
+                                </ol>
+                            `
+                        },
+                        en: {
+                            title: "Materials Management in Production Operations",
+                            content: `
+                                <h3>Materials Management in Production Operations</h3>
+                                <p>Materials management includes all activities related to planning, purchasing, storing, and controlling the flow of raw materials and products throughout the supply chain.</p>
+                                
+                                <h3>Components of Materials Management:</h3>
+                                <ul>
+                                    <li><strong>Materials Planning:</strong> Demand forecasting, determining required quantities</li>
+                                    <li><strong>Purchasing:</strong> Supplier selection, price negotiation</li>
+                                    <li><strong>Storage:</strong> Warehouse management, materials arrangement</li>
+                                    <li><strong>Inventory Control:</strong> Monitoring levels, preventing stockouts or overstocking</li>
+                                    <li><strong>Transport Management:</strong> Organizing internal and external materials transport</li>
+                                </ul>
+                                
+                                <h3>Advanced Inventory Management Techniques:</h3>
+                                <ul>
+                                    <li><strong>JIT System:</strong> Just-in-time delivery to reduce inventory</li>
+                                    <li><strong>ABC Analysis:</strong> Classifying materials by importance and value</li>
+                                    <li><strong>Reorder Point:</strong> Determining optimal reorder level</li>
+                                    <li><strong>MRP System:</strong> Computerized materials requirements planning</li>
+                                    <li><strong>ERP System:</strong> Comprehensive enterprise resource planning integration</li>
+                                </ul>
+                                
+                                <div class="example-box">
+                                    <h4>Practical Example: Materials Management in an Electronics Factory</h4>
+                                    <p><strong>Challenge:</strong> High inventory costs and frequent stockouts of critical materials</p>
+                                    <p><strong>Solution:</strong> Implementing an integrated materials management system:</p>
+                                    <ul>
+                                        <li>ABC Analysis: Classifying 1500 items into:
+                                            <ul>
+                                                <li>Category A (20% of items, 80% of value) - Daily monitoring</li>
+                                                <li>Category B (30% of items, 15% of value) - Weekly monitoring</li>
+                                                <li>Category C (50% of items, 5% of value) - Monthly monitoring</li>
+                                            </ul>
+                                        </li>
+                                        <li>JIT system for high-value materials</li>
+                                        <li>Framework agreements with key suppliers</li>
+                                        <li>Electronic inventory tracking system</li>
+                                    </ul>
+                                    <p><strong>Results:</strong> Reduced inventory costs by 35%, decreased stockouts by 90%, improved production flow by 25%.</p>
+                                </div>
+                                
+                                <h3>Materials Management Performance Indicators:</h3>
+                                <ul>
+                                    <li>Inventory Turnover Rate = Cost of Goods Sold ÷ Average Inventory</li>
+                                    <li>Days of Inventory = 365 ÷ Inventory Turnover Rate</li>
+                                    <li>Material Availability Rate = (Completed Orders ÷ Total Orders) × 100</li>
+                                    <li>Inventory Holding Cost as percentage of inventory value</li>
+                                    <li>Inventory Record Accuracy = (1 - [Difference between actual and recorded inventory ÷ Actual inventory]) × 100</li>
+                                </ul>
+                                
+                                <h3>Best Practices in Materials Management:</h3>
+                                <ol>
+                                    <li>Integration with suppliers and supply chain partners</li>
+                                    <li>Using technology and automated systems</li>
+                                    <li>Continuous training for materials management staff</li>
+                                    <li>Regular review of policies and procedures</li>
+                                    <li>Continuous improvement based on data and performance</li>
+                                </ol>
+                            `
+                        }
+                    }
+                }
+            },
+            // البطاقة 2: إدارة الجودة الشاملة
+            {
+                id: 2,
+                category: "quality",
+                title: {
+                    ar: "إدارة الجودة الشاملة",
+                    en: "Total Quality Management"
+                },
+                icon: "✅",
+                description: {
+                    ar: "نظام متكامل لتحقيق رضا العملاء والتميز في الأداء",
+                    en: "Integrated system to achieve customer satisfaction and performance excellence"
+                },
+                content: {
+                    ar: `
+                        <h3>إدارة الجودة الشاملة (TQM)</h3>
+                        <p>نهج إداري يركز على الجودة ويستند إلى مشاركة جميع أعضاء المنظمة في تحسين العمليات والمنتجات والخدمات.</p>
+                        
+                        <h3>مبادئ إدارة الجودة الشاملة:</h3>
+                        <ul>
+                            <li data-detail="customer-focus">التركيز على العميل</li>
+                            <li data-detail="leadership">القيادة الملهمة</li>
+                            <li data-detail="participation">مشاركة الجميع</li>
+                            <li data-detail="process-approach">النهج القائم على العمليات</li>
+                            <li data-detail="continuous-improvement">التحسين المستمر</li>
+                            <li data-detail="fact-based">اتخاذ القرارات بناءً على الحقائق</li>
+                            <li data-detail="supplier-relations">إدارة العلاقات مع الموردين</li>
+                        </ul>
+                        
+                        <h3>أدوات الجودة السبعة:</h3>
+                        <ul>
+                            <li data-detail="cause-effect">مخطط السبب والتأثير (عظمة السمكة)</li>
+                            <li data-detail="pareto">مخطط باريتو</li>
+                            <li data-detail="check-sheet">ورقة التحقق (Check Sheet)</li>
+                            <li data-detail="histogram">المدرج التكراري</li>
+                            <li data-detail="scatter">مخطط التشتت</li>
+                            <li data-detail="control-chart">خرائط المراقبة</li>
+                            <li data-detail="flow-chart">مخطط التدفق</li>
+                        </ul>
+                    `,
+                    en: `
+                        <h3>Total Quality Management (TQM)</h3>
+                        <p>A management approach focused on quality and based on the participation of all organization members in improving processes, products, and services.</p>
+                        
+                        <h3>TQM Principles:</h3>
+                        <ul>
+                            <li data-detail="customer-focus">Customer focus</li>
+                            <li data-detail="leadership">Inspirational leadership</li>
+                            <li data-detail="participation">Participation of all</li>
+                            <li data-detail="process-approach">Process-based approach</li>
+                            <li data-detail="continuous-improvement">Continuous improvement</li>
+                            <li data-detail="fact-based">Fact-based decision making</li>
+                            <li data-detail="supplier-relations">Supplier relationship management</li>
+                        </ul>
+                        
+                        <h3>Seven Quality Tools:</h3>
+                        <ul>
+                            <li data-detail="cause-effect">Cause and effect diagram (Fishbone)</li>
+                            <li data-detail="pareto">Pareto chart</li>
+                            <li data-detail="check-sheet">Check sheet</li>
+                            <li data-detail="histogram">Histogram</li>
+                            <li data-detail="scatter">Scatter diagram</li>
+                            <li data-detail="control-chart">Control charts</li>
+                            <li data-detail="flow-chart">Flow charts</li>
+                        </ul>
+                    `
+                },
+                details: {
+                    "customer-focus": {
+                        ar: {
+                            title: "التركيز على العميل في إدارة الجودة الشاملة",
+                            content: `
+                                <h3>التركيز على العميل في إدارة الجودة الشاملة</h3>
+                                <p>يعتبر العميل المحور الأساسي في إدارة الجودة الشاملة، حيث أن رضاه هو الهدف النهائي لكل العمليات والأنشطة.</p>
+                                
+                                <h3>أبعاد التركيز على العميل:</h3>
+                                <ul>
+                                    <li><strong>فهم احتياجات العميل:</strong> دراسة متطلبات وتوقعات العملاء الحالية والمستقبلية</li>
+                                    <li><strong>تطوير المنتجات والخدمات:</strong> تصميم عروض تلبي وتتجاوز توقعات العملاء</li>
+                                    <li><strong>قياس رضا العملاء:</strong> استخدام استبيانات ومقاييس لتقييم مستوى الرضا</li>
+                                    <li><strong>تحسين تجربة العميل:</strong> تحسين كل نقطة اتصال بين العميل والمنظمة</li>
+                                    <li><strong>بناء العلاقات:</strong> تطوير علاقات طويلة الأمد مع العملاء</li>
+                                </ul>
+                                
+                                <h3>طرق جمع معلومات العملاء:</h3>
+                                <ul>
+                                    <li>استبيانات رضا العملاء (شهرية/ربع سنوية)</li>
+                                    <li>مقابلات شخصية ومجموعات نقاش مركزة</li>
+                                    <li>تحليل شكاوى واقتراحات العملاء</li>
+                                    <li>دراسة بيانات المبيعات وأنماط الشراء</li>
+                                    <li>مقارنة الأداء مع المنافسين من وجهة نظر العملاء</li>
+                                </ul>
+                                
+                                <div class="example-box">
+                                    <h4>مثال عملي: تطبيق التركيز على العميل في شركة اتصالات</h4>
+                                    <p><strong>الوضع السابق:</strong> ارتفاع معدل شكاوى العملاء بنسبة 40% سنوياً</p>
+                                    <p><strong>الحل:</strong> تطبيق نظام متكامل للتركيز على العميل:</p>
+                                    <ul>
+                                        <li>إنشاء نظام لتتبع شكاوى العملاء وتحليلها آلياً</li>
+                                        <li>إجراء استبيان رضا شهري لعينة من 5000 عميل</li>
+                                        <li>تشكيل فرق عمل متعددة التخصصات لمعالجة أسباب الشكاوى</li>
+                                        <li>تطوير مؤشر أداء لوقت استجابة الشكاوى (هدف: 4 ساعات كحد أقصى)</li>
+                                        <li>مكافأة الموظفين بناءً على مؤشرات رضا العملاء</li>
+                                    </ul>
+                                    <p><strong>النتائج بعد سنة:</strong> انخفاض الشكاوى 60%، تحسين رضا العملاء من 65% إلى 88%، زيادة الاحتفاظ بالعملاء 15%.</p>
+                                </div>
+                                
+                                <h3>مؤشرات أداء التركيز على العميل:</h3>
+                                <ul>
+                                    <li>معدل رضا العملاء (CSAT)</li>
+                                    <li>معدل الاحتفاظ بالعملاء</li>
+                                    <li>صافي نقاط الترويج (NPS)</li>
+                                    <li>معدل تحويل الشكاوى إلى فرص تحسين</li>
+                                    <li>وقت استجابة شكاوى العملاء</li>
+                                </ul>
+                                
+                                <h3>أدوات تحليل احتياجات العملاء:</h3>
+                                <ul>
+                                    <li>تحليل Kano - تصنيف الميزات حسب تأثيرها على الرضا</li>
+                                    <li>خرائط رحلة العميل - تتبع تجربة العميل من البداية للنهاية</li>
+                                    <li>تحليل VOC - صوت العميل لفهم الاحتياجات غير المعلنة</li>
+                                    <li>بطاقات الأداء المتوازن - دمج مقاييس رضا العملاء في التقييم</li>
+                                </ul>
+                                
+                                <h3>استراتيجيات تحسين رضا العملاء:</h3>
+                                <ol>
+                                    <li>التواصل الفعال والمستمر مع العملاء</li>
+                                    <li>توفير منتجات وخدمات متميزة وقيمة مضافة</li>
+                                    <li>معالجة سريعة وفعالة للمشكلات والشكاوى</li>
+                                    <li>التطوير المستمر بناءً على ملاحظات العملاء</li>
+                                    <li>بناء ثقافة التركيز على العميل في جميع أقسام المنظمة</li>
+                                </ol>
+                            `
+                        },
+                        en: {
+                            title: "Customer Focus in Total Quality Management",
+                            content: `
+                                <h3>Customer Focus in Total Quality Management</h3>
+                                <p>The customer is considered the central focus in Total Quality Management, as their satisfaction is the ultimate goal of all processes and activities.</p>
+                                
+                                <h3>Dimensions of Customer Focus:</h3>
+                                <ul>
+                                    <li><strong>Understanding Customer Needs:</strong> Studying current and future customer requirements and expectations</li>
+                                    <li><strong>Developing Products and Services:</strong> Designing offerings that meet and exceed customer expectations</li>
+                                    <li><strong>Measuring Customer Satisfaction:</strong> Using surveys and metrics to assess satisfaction levels</li>
+                                    <li><strong>Improving Customer Experience:</strong> Enhancing every customer touchpoint</li>
+                                    <li><strong>Building Relationships:</strong> Developing long-term relationships with customers</li>
+                                </ul>
+                                
+                                <h3>Methods for Gathering Customer Information:</h3>
+                                <ul>
+                                    <li>Customer satisfaction surveys (monthly/quarterly)</li>
+                                    <li>Personal interviews and focus groups</li>
+                                    <li>Analysis of customer complaints and suggestions</li>
+                                    <li>Study of sales data and purchasing patterns</li>
+                                    <li>Performance comparison with competitors from customer perspective</li>
+                                </ul>
+                                
+                                <div class="example-box">
+                                    <h4>Practical Example: Applying Customer Focus in a Telecommunications Company</h4>
+                                    <p><strong>Previous Situation:</strong> 40% annual increase in customer complaint rate</p>
+                                    <p><strong>Solution:</strong> Implementing an integrated customer focus system:</p>
+                                    <ul>
+                                        <li>Creating an automated system to track and analyze customer complaints</li>
+                                        <li>Conducting monthly satisfaction surveys with 5000 customer samples</li>
+                                        <li>Forming cross-functional teams to address complaint causes</li>
+                                        <li>Developing performance indicator for complaint response time (target: maximum 4 hours)</li>
+                                        <li>Rewarding employees based on customer satisfaction indicators</li>
+                                    </ul>
+                                    <p><strong>Results after one year:</strong> 60% reduction in complaints, customer satisfaction improved from 65% to 88%, 15% increase in customer retention.</p>
+                                </div>
+                                
+                                <h3>Customer Focus Performance Indicators:</h3>
+                                <ul>
+                                    <li>Customer Satisfaction Rate (CSAT)</li>
+                                    <li>Customer Retention Rate</li>
+                                    <li>Net Promoter Score (NPS)</li>
+                                    <li>Complaint to Improvement Opportunity Conversion Rate</li>
+                                    <li>Customer Complaint Response Time</li>
+                                </ul>
+                                
+                                <h3>Customer Needs Analysis Tools:</h3>
+                                <ul>
+                                    <li>Kano Analysis - Classifying features by their impact on satisfaction</li>
+                                    <li>Customer Journey Maps - Tracking customer experience from start to end</li>
+                                    <li>VOC Analysis - Voice of Customer to understand unstated needs</li>
+                                    <li>Balanced Scorecard - Integrating customer satisfaction metrics into evaluation</li>
+                                </ul>
+                                
+                                <h3>Strategies for Improving Customer Satisfaction:</h3>
+                                <ol>
+                                    <li>Effective and continuous communication with customers</li>
+                                    <li>Providing distinguished products and services with added value</li>
+                                    <li>Quick and effective problem and complaint resolution</li>
+                                    <li>Continuous development based on customer feedback</li>
+                                    <li>Building a customer-focused culture across all organizational departments</li>
+                                </ol>
+                            `
+                        }
+                    },
+                    "continuous-improvement": {
+                        ar: {
+                            title: "التحسين المستمر في إدارة الجودة الشاملة",
+                            content: `
+                                <h3>التحسين المستمر في إدارة الجودة الشاملة</h3>
+                                <p>التحسين المستمر هو فلسفة تنظيمية تهدف إلى تحسين العمليات والمنتجات والخدمات بشكل مستمر من خلال جهود صغيرة ومتتالية.</p>
+                                
+                                <h3>مبادئ التحسين المستمر:</h3>
+                                <ul>
+                                    <li><strong>كايزن (Kaizen):</strong> التحسين التدريجي المستمر الذي يشمل الجميع</li>
+                                    <li><strong>التغيير التدريجي:</strong> تحسينات صغيرة مستمرة بدلاً من تغييرات كبيرة متباعدة</li>
+                                    <li><strong>مشاركة الجميع:</strong> إشراك جميع الموظفين في عملية التحسين</li>
+                                    <li><strong>التركيز على العمليات:</strong> تحسين العمليات بدلاً من معالجة الأعراض</li>
+                                    <li><strong>القياس والتقييم:</strong> استخدام البيانات لتقييم فعالية التحسينات</li>
+                                </ul>
+                                
+                                <h3>منهجيات التحسين المستمر:</h3>
+                                <ul>
+                                    <li><strong>دورة PDCA:</strong> خطط (Plan) - نفذ (Do) - تحقق (Check) - تصرف (Act)</li>
+                                    <li><strong>دورة DMAIC:</strong> حدد (Define) - قياس (Measure) - تحليل (Analyze) - حسن (Improve) - تحكم (Control)</li>
+                                    <li><strong>5S:</strong> ترتيب (Seiri) - تنظيم (Seiton) - تنظيف (Seiso) - توحيد (Seiketsu) - الالتزام (Shitsuke)</li>
+                                    <li><strong>تقليل الهدر:</strong> تحديد وإزالة الأنشطة غير ذات القيمة المضافة</li>
+                                </ul>
+                                
+                                <div class="example-box">
+                                    <h4>مثال عملي: تطبيق التحسين المستمر في مصنع تعبئة المياه</h4>
+                                    <p><strong>المشكلة:</strong> ارتفاع نسبة الفاقد في خط التعبئة إلى 8%</p>
+                                    <p><strong>الحل:</strong> تطبيق منهجية التحسين المستمر:</p>
+                                    <ul>
+                                        <li>تشكيل فريق تحسين متعدد التخصصات</li>
+                                        <li>تحليل أسباب الفاقد باستخدام مخطط عظمة السمكة</li>
+                                        <li>تطبيق تحسينات صغيرة يومية:
+                                            <ul>
+                                                <li>ضبط سرعة خط التعبئة</li>
+                                                <li>تحسين نظام توجيه الزجاجات</li>
+                                                <li>تعديل ضغط الهواء في نظام النقل</li>
+                                                <li>تحسين توقيت عمليات التنظيف</li>
+                                            </ul>
+                                        </li>
+                                        <li>قياس النتائج أسبوعياً وتعديل التحسينات</li>
+                                    </ul>
+                                    <p><strong>النتائج بعد 3 أشهر:</strong> انخفاض نسبة الفاقد من 8% إلى 2.5%، توفير 150,000 جنيه شهرياً، زيادة الإنتاجية 12%.</p>
+                                </div>
+                                
+                                <h3>أدوات التحسين المستمر:</h3>
+                                <ul>
+                                    <li>مخطط باريتو - تحديد المشكلات الأكثر تأثيراً</li>
+                                    <li>مخطط السبب والتأثير - تحليل الأسباب الجذرية للمشكلات</li>
+                                    <li>خرائط تدفق القيمة - تحسين تدفق المواد والمعلومات</li>
+                                    <li>مخططات المراقبة - متابعة أداء العمليات</li>
+                                    <li>دراسة الوقت والحركة - تحسين كفاءة العمليات</li>
+                                </ul>
+                                
+                                <h3>مؤشرات نجاح التحسين المستمر:</h3>
+                                <ul>
+                                    <li>عدد مقترحات التحسين المقدمة من الموظفين</li>
+                                    <li>نسبة تنفيذ مقترحات التحسين</li>
+                                    <li>التوفير الناتج عن التحسينات</li>
+                                    <li>تحسين مؤشرات الأداء الرئيسية</li>
+                                    <li>رضا الموظفين عن بيئة العمل</li>
+                                </ul>
+                                
+                                <h3>خطوات تنفيذ التحسين المستمر:</h3>
+                                <ol>
+                                    <li>تحديد مجالات التحسين ذات الأولوية</li>
+                                    <li>تشكيل فرق التحسين وتدريبها</li>
+                                    <li>جمع البيانات وتحليل الوضع الحالي</li>
+                                    <li>تطوير وتنفيذ حلول التحسين</li>
+                                    <li>قياس النتائج وتقييم الفعالية</li>
+                                    <li>توحيد التحسينات ونشرها</li>
+                                    <li>البدء في دورة تحسين جديدة</li>
+                                </ol>
+                            `
+                        },
+                        en: {
+                            title: "Continuous Improvement in Total Quality Management",
+                            content: `
+                                <h3>Continuous Improvement in Total Quality Management</h3>
+                                <p>Continuous improvement is an organizational philosophy aimed at continuously improving processes, products, and services through small, successive efforts.</p>
+                                
+                                <h3>Principles of Continuous Improvement:</h3>
+                                <ul>
+                                    <li><strong>Kaizen:</strong> Continuous gradual improvement involving everyone</li>
+                                    <li><strong>Gradual Change:</strong> Small continuous improvements rather than large infrequent changes</li>
+                                    <li><strong>Everyone's Participation:</strong> Involving all employees in the improvement process</li>
+                                    <li><strong>Process Focus:</strong> Improving processes rather than treating symptoms</li>
+                                    <li><strong>Measurement and Evaluation:</strong> Using data to assess improvement effectiveness</li>
+                                </ul>
+                                
+                                <h3>Continuous Improvement Methodologies:</h3>
+                                <ul>
+                                    <li><strong>PDCA Cycle:</strong> Plan - Do - Check - Act</li>
+                                    <li><strong>DMAIC Cycle:</strong> Define - Measure - Analyze - Improve - Control</li>
+                                    <li><strong>5S:</strong> Sort - Set in order - Shine - Standardize - Sustain</li>
+                                    <li><strong>Waste Reduction:</strong> Identifying and eliminating non-value-added activities</li>
+                                </ul>
+                                
+                                <div class="example-box">
+                                    <h4>Practical Example: Applying Continuous Improvement in a Water Bottling Plant</h4>
+                                    <p><strong>Problem:</strong> High waste rate in the bottling line reaching 8%</p>
+                                    <p><strong>Solution:</strong> Implementing continuous improvement methodology:</p>
+                                    <ul>
+                                        <li>Forming a cross-functional improvement team</li>
+                                        <li>Analyzing waste causes using fishbone diagram</li>
+                                        <li>Implementing small daily improvements:
+                                            <ul>
+                                                <li>Adjusting bottling line speed</li>
+                                                <li>Improving bottle guidance system</li>
+                                                <li>Modifying air pressure in transport system</li>
+                                                <li>Optimizing cleaning process timing</li>
+                                            </ul>
+                                        </li>
+                                        <li>Measuring results weekly and adjusting improvements</li>
+                                    </ul>
+                                    <p><strong>Results after 3 months:</strong> Waste rate reduced from 8% to 2.5%, monthly savings of 150,000 pounds, productivity increased by 12%.</p>
+                                </div>
+                                
+                                <h3>Continuous Improvement Tools:</h3>
+                                <ul>
+                                    <li>Pareto Chart - Identifying most impactful problems</li>
+                                    <li>Cause and Effect Diagram - Analyzing root causes of problems</li>
+                                    <li>Value Stream Mapping - Improving material and information flow</li>
+                                    <li>Control Charts - Monitoring process performance</li>
+                                    <li>Time and Motion Study - Improving process efficiency</li>
+                                </ul>
+                                
+                                <h3>Continuous Improvement Success Indicators:</h3>
+                                <ul>
+                                    <li>Number of improvement suggestions from employees</li>
+                                    <li>Implementation rate of improvement suggestions</li>
+                                    <li>Savings resulting from improvements</li>
+                                    <li>Improvement in key performance indicators</li>
+                                    <li>Employee satisfaction with work environment</li>
+                                </ul>
+                                
+                                <h3>Steps for Implementing Continuous Improvement:</h3>
+                                <ol>
+                                    <li>Identifying priority improvement areas</li>
+                                    <li>Forming and training improvement teams</li>
+                                    <li>Collecting data and analyzing current situation</li>
+                                    <li>Developing and implementing improvement solutions</li>
+                                    <li>Measuring results and evaluating effectiveness</li>
+                                    <li>Standardizing improvements and spreading them</li>
+                                    <li>Starting a new improvement cycle</li>
+                                </ol>
+                            `
+                        }
+                    }
+                }
+            },
+            // يمكن إضافة 13 بطاقة إضافية هنا بنفس الهيكل
+            // البطاقة 3: قياس وتحليل الإنتاجية
+            {
+                id: 3,
+                category: "productivity",
+                title: {
+                    ar: "قياس وتحليل الإنتاجية",
+                    en: "Productivity Measurement and Analysis"
+                },
+                icon: "📊",
+                description: {
+                    ar: "مؤشرات وأدوات قياس وتحسين الإنتاجية",
+                    en: "Indicators and tools for measuring and improving productivity"
+                },
+                content: {
+                    ar: `
+                        <h3>قياس وتحليل الإنتاجية</h3>
+                        <p>الإنتاجية = المخرجات / المدخلات</p>
+                        
+                        <h3>أنواع مؤشرات الإنتاجية:</h3>
+                        <ul>
+                            <li data-detail="total-productivity">الإنتاجية الكلية = الإيرادات الكلية / التكاليف الكلية</li>
+                            <li data-detail="labor-productivity">إنتاجية العمل = صافي الإيرادات / تكلفة العمل</li>
+                            <li data-detail="material-productivity">إنتاجية المواد = صافي الإيرادات / تكلفة المواد الخام</li>
+                            <li data-detail="machine-productivity">إنتاجية الآلات = صافي الإيرادات / تكلفة الآلات</li>
+                            <li data-detail="energy-productivity">إنتاجية الطاقة = كيلوواط ساعة / وحدة إنتاج</li>
+                        </ul>
+                        
+                        <h3>مؤشرات الأداء الرئيسية (KPIs):</h3>
+                        <ul>
+                            <li data-detail="efficiency">الكفاءة = المخرجات الفعلية / المدخلات الفعلية</li>
+                            <li data-detail="effectiveness">الفاعلية = المخرجات الفعلية / المخرجات المستهدفة</li>
+                            <li data-detail="productivity-formula">الإنتاجية = الكفاءة × الفاعلية</li>
+                            <li data-detail="quality-rate">معدل الجودة = (الكمية الإجمالية - الكمية المعيبة) / الكمية الإجمالية</li>
+                            <li data-detail="production-rate">معدل الإنتاج = صافي الكمية / الوقت القياسي</li>
+                        </ul>
+                    `,
+                    en: `
+                        <h3>Productivity Measurement and Analysis</h3>
+                        <p>Productivity = Outputs / Inputs</p>
+                        
+                        <h3>Types of Productivity Indicators:</h3>
+                        <ul>
+                            <li data-detail="total-productivity">Total Productivity = Total Revenue / Total Cost</li>
+                            <li data-detail="labor-productivity">Labor Productivity = Net Revenue / Labor Cost</li>
+                            <li data-detail="material-productivity">Material Productivity = Net Revenue / Raw Material Cost</li>
+                            <li data-detail="machine-productivity">Machine Productivity = Net Revenue / Machine Cost</li>
+                            <li data-detail="energy-productivity">Energy Productivity = kWh / Production Unit</li>
+                        </ul>
+                        
+                        <h3>Key Performance Indicators (KPIs):</h3>
+                        <ul>
+                            <li data-detail="efficiency">Efficiency = Actual Outputs / Actual Inputs</li>
+                            <li data-detail="effectiveness">Effectiveness = Actual Outputs / Target Outputs</li>
+                            <li data-detail="productivity-formula">Productivity = Efficiency × Effectiveness</li>
+                            <li data-detail="quality-rate">Quality Rate = (Total Quantity - Defect Quantity) / Total Quantity</li>
+                            <li data-detail="production-rate">Production Rate = Net Quantity / Standard Time</li>
+                        </ul>
+                    `
+                },
+                details: {
+                    // تفاصيل موسعة لكل نقطة
+                }
+            },
+            // البطاقة 4: لين سيكس سيجما
+            {
+                id: 4,
+                category: "improvement",
+                title: {
+                    ar: "لين سيكس سيجما",
+                    en: "Lean Six Sigma"
+                },
+                icon: "⚡",
+                description: {
+                    ar: "الجمع بين منهجيات لين وستة سيجما للتحسين",
+                    en: "Combining Lean and Six Sigma methodologies for improvement"
+                },
+                content: {
+                    ar: `
+                        <h3>لين سيكس سيجما</h3>
+                        <p>نهج تحسين يجمع بين أدوات ومبادئ الإنتاج الرشيق (لين) وستة سيجما لتحقيق الكفاءة والجودة.</p>
+                        
+                        <h3>مكونات لين سيكس سيجما:</h3>
+                        <ul>
+                            <li data-detail="lean">لين (Lean) - يركز على تقليل الهدر</li>
+                            <li data-detail="six-sigma">ستة سيجما (Six Sigma) - يركز على تقليل التباين والعيوب</li>
+                            <li data-detail="kaizen">كايزن (Kaizen) - يركز على التحسين المستمر</li>
+                        </ul>
+                        
+                        <h3>هدر لين السبعة:</h3>
+                        <ul>
+                            <li data-detail="overproduction">الإنتاج الزائد</li>
+                            <li data-detail="waiting">الانتظار</li>
+                            <li data-detail="transport">النقل غير الضروري</li>
+                            <li data-detail="overprocessing">المعالجة الزائدة</li>
+                            <li data-detail="inventory">المخزون الزائد</li>
+                            <li data-detail="motion">الحركة غير الضرورية</li>
+                            <li data-detail="defects">العيوب وإعادة العمل</li>
+                        </ul>
+                    `,
+                    en: `
+                        <h3>Lean Six Sigma</h3>
+                        <p>An improvement approach that combines tools and principles of Lean and Six Sigma to achieve efficiency and quality.</p>
+                        
+                        <h3>Lean Six Sigma Components:</h3>
+                        <ul>
+                            <li data-detail="lean">Lean - Focuses on waste reduction</li>
+                            <li data-detail="six-sigma">Six Sigma - Focuses on variation and defect reduction</li>
+                            <li data-detail="kaizen">Kaizen - Focuses on continuous improvement</li>
+                        </ul>
+                        
+                        <h3>Seven Lean Wastes:</h3>
+                        <ul>
+                            <li data-detail="overproduction">Overproduction</li>
+                            <li data-detail="waiting">Waiting</li>
+                            <li data-detail="transport">Unnecessary transport</li>
+                            <li data-detail="overprocessing">Overprocessing</li>
+                            <li data-detail="inventory">Excess inventory</li>
+                            <li data-detail="motion">Unnecessary motion</li>
+                            <li data-detail="defects">Defects and rework</li>
+                        </ul>
+                    `
+                },
+                details: {
+                    // تفاصيل موسعة لكل نقطة
+                }
+            },
+            // البطاقة 5: أدوات التخطيط والرقابة
+            {
+                id: 5,
+                category: "tools",
+                title: {
+                    ar: "أدوات التخطيط والرقابة",
+                    en: "Planning and Control Tools"
+                },
+                icon: "🛠️",
+                description: {
+                    ar: "أدوات وأساليب التخطيط والرقابة على العمليات",
+                    en: "Tools and methods for planning and controlling operations"
+                },
+                content: {
+                    ar: `
+                        <h3>أدوات التخطيط والرقابة</h3>
+                        <p>مجموعة من الأدوات والأساليب المستخدمة في تخطيط ورقابة العمليات الإنتاجية.</p>
+                        
+                        <h3>أدوات التخطيط:</h3>
+                        <ul>
+                            <li data-detail="dashboard">لوحة القيادة (Dashboard) - عرض مؤشرات الأداء</li>
+                            <li data-detail="balanced-scorecard">البطاقة المتوازنة للأداء (Balanced Scorecard)</li>
+                            <li data-detail="strategy-maps">خرائط الاستراتيجية (Strategy Maps)</li>
+                            <li data-detail="priority-matrix">مصفوفة الأولويات (Priority Matrix)</li>
+                            <li data-detail="gantt-chart">مخطط جانت (Gantt Chart) - تخطيط المشاريع</li>
+                        </ul>
+                    `,
+                    en: `
+                        <h3>Planning and Control Tools</h3>
+                        <p>A set of tools and methods used in planning and controlling production operations.</p>
+                        
+                        <h3>Planning Tools:</h3>
+                        <ul>
+                            <li data-detail="dashboard">Dashboard - Display performance indicators</li>
+                            <li data-detail="balanced-scorecard">Balanced Scorecard</li>
+                            <li data-detail="strategy-maps">Strategy Maps</li>
+                            <li data-detail="priority-matrix">Priority Matrix</li>
+                            <li data-detail="gantt-chart">Gantt Chart - Project planning</li>
+                        </ul>
+                    `
+                },
+                details: {
+                    // تفاصيل موسعة لكل نقطة
+                }
+            },
+            // البطاقة 6: الإدارة بالأهداف
+            {
+                id: 6,
+                category: "management",
+                title: {
+                    ar: "الإدارة بالأهداف",
+                    en: "Management by Objectives"
+                },
+                icon: "🎯",
+                description: {
+                    ar: "نظام إداري يركز على تحقيق الأهداف المحددة",
+                    en: "Management system focused on achieving specific objectives"
+                },
+                content: {
+                    ar: `
+                        <h3>الإدارة بالأهداف</h3>
+                        <p>نظام إداري يركز على تحديد الأهداف وقياس الأداء بناءً على تحقيق هذه الأهداف.</p>
+                        
+                        <h3>مكونات النظام:</h3>
+                        <ul>
+                            <li data-detail="vision">الرؤية (Vision) - الصورة المستقبلية للمنظمة</li>
+                            <li data-detail="mission">الرسالة (Mission) - سبب وجود المنظمة</li>
+                            <li data-detail="values">القيم (Values) - المبادئ التوجيهية</li>
+                            <li data-detail="objectives">الأهداف (Objectives) - النتائج المطلوبة</li>
+                            <li data-detail="kpis">مؤشرات الأداء (KPIs) - مقاييس تحقيق الأهداف</li>
+                        </ul>
+                    `,
+                    en: `
+                        <h3>Management by Objectives</h3>
+                        <p>A management system focused on setting objectives and measuring performance based on achieving these objectives.</p>
+                        
+                        <h3>System Components:</h3>
+                        <ul>
+                            <li data-detail="vision">Vision - Future picture of the organization</li>
+                            <li data-detail="mission">Mission - Reason for organization's existence</li>
+                            <li data-detail="values">Values - Guiding principles</li>
+                            <li data-detail="objectives">Objectives - Required results</li>
+                            <li data-detail="kpis">Performance Indicators (KPIs) - Measures of goal achievement</li>
+                        </ul>
+                    `
+                },
+                details: {
+                    // تفاصيل موسعة لكل نقطة
+                }
+            },
+            // البطاقة 7: نظام إدارة الجودة
+            {
+                id: 7,
+                category: "quality",
+                title: {
+                    ar: "نظام إدارة الجودة",
+                    en: "Quality Management System"
+                },
+                icon: "🏆",
+                description: {
+                    ar: "متطلبات ومعايير نظام إدارة الجودة ISO 9001",
+                    en: "Requirements and standards of ISO 9001 Quality Management System"
+                },
+                content: {
+                    ar: `
+                        <h3>نظام إدارة الجودة ISO 9001</h3>
+                        <p>معيار دولي يحدد متطلبات نظام إدارة الجودة الذي يمكن للمنظمات استخدامه لتطوير أنظمة الجودة الخاصة بها.</p>
+                        
+                        <h3>هيكل المستوى العالي (HLS):</h3>
+                        <ul>
+                            <li data-detail="scope">المجال (Scope) - نطاق التطبيق</li>
+                            <li data-detail="references">المراجع المعيارية (Normative References)</li>
+                            <li data-detail="terms">المصطلحات والتعريفات (Terms & Definitions)</li>
+                            <li data-detail="context">سياق المنظمة (Context of the Organization)</li>
+                            <li data-detail="leadership">القيادة (Leadership)</li>
+                        </ul>
+                    `,
+                    en: `
+                        <h3>ISO 9001 Quality Management System</h3>
+                        <p>An international standard that specifies requirements for a quality management system that organizations can use to develop their own quality systems.</p>
+                        
+                        <h3>High Level Structure (HLS):</h3>
+                        <ul>
+                            <li data-detail="scope">Scope - Application scope</li>
+                            <li data-detail="references">Normative References</li>
+                            <li data-detail="terms">Terms & Definitions</li>
+                            <li data-detail="context">Context of the Organization</li>
+                            <li data-detail="leadership">Leadership</li>
+                        </ul>
+                    `
+                },
+                details: {
+                    // تفاصيل موسعة لكل نقطة
+                }
+            },
+            // البطاقة 8: تحليل التكاليف
+            {
+                id: 8,
+                category: "productivity",
+                title: {
+                    ar: "تحليل التكاليف",
+                    en: "Cost Analysis"
+                },
+                icon: "💰",
+                description: {
+                    ar: "تحليل وتصنيف وتقليل تكاليف العمليات الإنتاجية",
+                    en: "Analysis, classification and reduction of production operation costs"
+                },
+                content: {
+                    ar: `
+                        <h3>تحليل التكاليف</h3>
+                        <p>عملية تحديد وتصنيف ومراقبة تكاليف العمليات الإنتاجية لتحسين الربحية.</p>
+                        
+                        <h3>أنواع التكاليف:</h3>
+                        <ul>
+                            <li data-detail="direct-costs">التكاليف المباشرة - ترتبط مباشرة بالإنتاج</li>
+                            <li data-detail="indirect-costs">التكاليف غير المباشرة - ضرورية ولكن غير مرتبطة مباشرة</li>
+                            <li data-detail="fixed-costs">التكاليف الثابتة - لا تتغير مع حجم الإنتاج</li>
+                            <li data-detail="variable-costs">التكاليف المتغيرة - تتغير مع حجم الإنتاج</li>
+                            <li data-detail="semi-variable">التكاليف شبه المتغيرة - جزء ثابت وجزء متغير</li>
+                        </ul>
+                    `,
+                    en: `
+                        <h3>Cost Analysis</h3>
+                        <p>The process of identifying, classifying, and controlling production operation costs to improve profitability.</p>
+                        
+                        <h3>Types of Costs:</h3>
+                        <ul>
+                            <li data-detail="direct-costs">Direct Costs - Directly related to production</li>
+                            <li data-detail="indirect-costs">Indirect Costs - Necessary but not directly related</li>
+                            <li data-detail="fixed-costs">Fixed Costs - Don't change with production volume</li>
+                            <li data-detail="variable-costs">Variable Costs - Change with production volume</li>
+                            <li data-detail="semi-variable">Semi-variable Costs - Part fixed and part variable</li>
+                        </ul>
+                    `
+                },
+                details: {
+                    // تفاصيل موسعة لكل نقطة
+                }
+            },
+            // البطاقة 9: إدارة سلسلة التوريد
+            {
+                id: 9,
+                category: "management",
+                title: {
+                    ar: "إدارة سلسلة التوريد",
+                    en: "Supply Chain Management"
+                },
+                icon: "🔗",
+                description: {
+                    ar: "إدارة تدفق المواد والمعلومات من المورد إلى العميل",
+                    en: "Managing the flow of materials and information from supplier to customer"
+                },
+                content: {
+                    ar: `
+                        <h3>إدارة سلسلة التوريد</h3>
+                        <p>إدارة تدفق المواد والمعلومات والمال من الموردين عبر الشركة إلى العملاء.</p>
+                        
+                        <h3>مكونات سلسلة التوريد:</h3>
+                        <ul>
+                            <li data-detail="suppliers">الموردون (Suppliers)</li>
+                            <li data-detail="manufacturing">التصنيع (Manufacturing)</li>
+                            <li data-detail="distribution">التوزيع (Distribution)</li>
+                            <li data-detail="retail">التجزئة (Retail)</li>
+                            <li data-detail="customers">العملاء (Customers)</li>
+                        </ul>
+                    `,
+                    en: `
+                        <h3>Supply Chain Management</h3>
+                        <p>Managing the flow of materials, information, and money from suppliers through the company to customers.</p>
+                        
+                        <h3>Supply Chain Components:</h3>
+                        <ul>
+                            <li data-detail="suppliers">Suppliers</li>
+                            <li data-detail="manufacturing">Manufacturing</li>
+                            <li data-detail="distribution">Distribution</li>
+                            <li data-detail="retail">Retail</li>
+                            <li data-detail="customers">Customers</li>
+                        </ul>
+                    `
+                },
+                details: {
+                    // تفاصيل موسعة لكل نقطة
+                }
+            },
+            // البطاقة 10: الصيانة والإصلاح
+            {
+                id: 10,
+                category: "maintenance",
+                title: {
+                    ar: "الصيانة والإصلاح",
+                    en: "Maintenance and Repair"
+                },
+                icon: "🔧",
+                description: {
+                    ar: "استراتيجيات وأساليب الصيانة الوقائية والتصحيحية",
+                    en: "Strategies and methods for preventive and corrective maintenance"
+                },
+                content: {
+                    ar: `
+                        <h3>الصيانة والإصلاح</h3>
+                        <p>مجموعة الأنشطة للحفاظ على المعدات في حالة تشغيلية جيدة ومنع الأعطال.</p>
+                        
+                        <h3>أنواع الصيانة:</h3>
+                        <ul>
+                            <li data-detail="preventive">الصيانة الوقائية (المخططة)</li>
+                            <li data-detail="predictive">الصيانة التنبؤية (بناء على البيانات)</li>
+                            <li data-detail="corrective">الصيانة الإصلاحية (بعد العطل)</li>
+                            <li data-detail="improvement">الصيانة التحسينية (لرفع الكفاءة)</li>
+                        </ul>
+                    `,
+                    en: `
+                        <h3>Maintenance and Repair</h3>
+                        <p>A set of activities to keep equipment in good operating condition and prevent breakdowns.</p>
+                        
+                        <h3>Types of Maintenance:</h3>
+                        <ul>
+                            <li data-detail="preventive">Preventive (planned) maintenance</li>
+                            <li data-detail="predictive">Predictive (data-based) maintenance</li>
+                            <li data-detail="corrective">Corrective (after failure) maintenance</li>
+                            <li data-detail="improvement">Improvement (efficiency enhancement) maintenance</li>
+                        </ul>
+                    `
+                },
+                details: {
+                    // تفاصيل موسعة لكل نقطة
+                }
+            },
+            // البطاقة 11: سلامة العمليات
+            {
+                id: 11,
+                category: "management",
+                title: {
+                    ar: "سلامة العمليات",
+                    en: "Process Safety"
+                },
+                icon: "🛡️",
+                description: {
+                    ar: "ضمان بيئة عمل آمنة ومنع الحوادث",
+                    en: "Ensuring a safe work environment and preventing accidents"
+                },
+                content: {
+                    ar: `
+                        <h3>سلامة العمليات</h3>
+                        <p>مجموعة الممارسات والإجراءات لمنع الحوادث والإصابات في بيئة العمل.</p>
+                        
+                        <h3>عناصر السلامة الأساسية:</h3>
+                        <ul>
+                            <li data-detail="risk-assessment">تقييم المخاطر</li>
+                            <li data-detail="safe-procedures">إجراءات العمل الآمنة</li>
+                            <li data-detail="ppe">استخدام معدات الحماية الشخصية</li>
+                            <li data-detail="training">التدريب المستمر</li>
+                            <li data-detail="emergency">خطط الطوارئ</li>
+                        </ul>
+                    `,
+                    en: `
+                        <h3>Process Safety</h3>
+                        <p>A set of practices and procedures to prevent accidents and injuries in the work environment.</p>
+                        
+                        <h3>Basic Safety Elements:</h3>
+                        <ul>
+                            <li data-detail="risk-assessment">Risk assessment</li>
+                            <li data-detail="safe-procedures">Safe work procedures</li>
+                            <li data-detail="ppe">Use of personal protective equipment</li>
+                            <li data-detail="training">Continuous training</li>
+                            <li data-detail="emergency">Emergency plans</li>
+                        </ul>
+                    `
+                },
+                details: {
+                    // تفاصيل موسعة لكل نقطة
+                }
+            },
+            // البطاقة 12: تحسين العمليات
+            {
+                id: 12,
+                category: "improvement",
+                title: {
+                    ar: "تحسين العمليات",
+                    en: "Process Improvement"
+                },
+                icon: "📈",
+                description: {
+                    ar: "رفع كفاءة العمليات الإنتاجية",
+                    en: "Enhancing production process efficiency"
+                },
+                content: {
+                    ar: `
+                        <h3>تحسين العمليات</h3>
+                        <p>المنهجيات والأدوات المستخدمة لتحسين كفاءة وجودة العمليات الإنتاجية.</p>
+                        
+                        <h3>منهجيات التحسين:</h3>
+                        <ul>
+                            <li data-detail="lean">مبادئ الإنتاج الرشيق (Lean)</li>
+                            <li data-detail="six-sigma">ستة سيجما (Six Sigma)</li>
+                            <li data-detail="value-analysis">تحليل القيمة المضافة</li>
+                            <li data-detail="value-stream">خرائط تدفق القيمة</li>
+                            <li data-detail="cause-effect">مخططات السبب والنتيجة</li>
+                        </ul>
+                    `,
+                    en: `
+                        <h3>Process Improvement</h3>
+                        <p>Methodologies and tools used to improve the efficiency and quality of production processes.</p>
+                        
+                        <h3>Improvement Methodologies:</h3>
+                        <ul>
+                            <li data-detail="lean">Lean manufacturing principles</li>
+                            <li data-detail="six-sigma">Six Sigma</li>
+                            <li data-detail="value-analysis">Value-added analysis</li>
+                            <li data-detail="value-stream">Value stream mapping</li>
+                            <li data-detail="cause-effect">Cause and effect diagrams</li>
+                        </ul>
+                    `
+                },
+                details: {
+                    // تفاصيل موسعة لكل نقطة
+                }
+            },
+            // البطاقة 13: إدارة المشاريع
+            {
+                id: 13,
+                category: "management",
+                title: {
+                    ar: "إدارة المشاريع",
+                    en: "Project Management"
+                },
+                icon: "📋",
+                description: {
+                    ar: "تخطيط وتنفيذ ومراقبة المشاريع الإنتاجية",
+                    en: "Planning, executing and monitoring production projects"
+                },
+                content: {
+                    ar: `
+                        <h3>إدارة المشاريع</h3>
+                        <p>تطبيق المعارف والمهارات والأدوات والتقنيات على أنشطة المشروع لتلبية متطلباته.</p>
+                        
+                        <h3>مجالات المعرفة:</h3>
+                        <ul>
+                            <li data-detail="integration">إدارة التكامل</li>
+                            <li data-detail="scope">إدارة النطاق</li>
+                            <li data-detail="time">إدارة الوقت</li>
+                            <li data-detail="cost">إدارة التكلفة</li>
+                            <li data-detail="quality">إدارة الجودة</li>
+                        </ul>
+                    `,
+                    en: `
+                        <h3>Project Management</h3>
+                        <p>Applying knowledge, skills, tools, and techniques to project activities to meet project requirements.</p>
+                        
+                        <h3>Knowledge Areas:</h3>
+                        <ul>
+                            <li data-detail="integration">Integration Management</li>
+                            <li data-detail="scope">Scope Management</li>
+                            <li data-detail="time">Time Management</li>
+                            <li data-detail="cost">Cost Management</li>
+                            <li data-detail="quality">Quality Management</li>
+                        </ul>
+                    `
+                },
+                details: {
+                    // تفاصيل موسعة لكل نقطة
+                }
+            },
+            // البطاقة 14: الذكاء الاصطناعي في العمليات
+            {
+                id: 14,
+                category: "improvement",
+                title: {
+                    ar: "الذكاء الاصطناعي في العمليات",
+                    en: "AI in Operations"
+                },
+                icon: "🤖",
+                description: {
+                    ar: "تطبيقات الذكاء الاصطناعي في تحسين العمليات الإنتاجية",
+                    en: "Artificial intelligence applications in improving production operations"
+                },
+                content: {
+                    ar: `
+                        <h3>الذكاء الاصطناعي في العمليات</h3>
+                        <p>استخدام تقنيات الذكاء الاصطناعي لتحسين كفاءة ودقة العمليات الإنتاجية.</p>
+                        
+                        <h3>تطبيقات الذكاء الاصطناعي:</h3>
+                        <ul>
+                            <li data-detail="predictive-maintenance">الصيانة التنبؤية</li>
+                            <li data-detail="quality-control">مراقبة الجودة الآلية</li>
+                            <li data-detail="supply-chain">تحسين سلسلة التوريد</li>
+                            <li data-detail="production-planning">تخطيط الإنتاج الذكي</li>
+                            <li data-detail="robotics">الروبوتات والآلات الذكية</li>
+                        </ul>
+                    `,
+                    en: `
+                        <h3>AI in Operations</h3>
+                        <p>Using artificial intelligence technologies to improve the efficiency and accuracy of production operations.</p>
+                        
+                        <h3>AI Applications:</h3>
+                        <ul>
+                            <li data-detail="predictive-maintenance">Predictive Maintenance</li>
+                            <li data-detail="quality-control">Automated Quality Control</li>
+                            <li data-detail="supply-chain">Supply Chain Optimization</li>
+                            <li data-detail="production-planning">Smart Production Planning</li>
+                            <li data-detail="robotics">Robotics and Smart Machines</li>
+                        </ul>
+                    `
+                },
+                details: {
+                    // تفاصيل موسعة لكل نقطة
+                }
+            },
+            // البطاقة 15: الاستدامة في العمليات
+            {
+                id: 15,
+                category: "management",
+                title: {
+                    ar: "الاستدامة في العمليات",
+                    en: "Sustainability in Operations"
+                },
+                icon: "🌱",
+                description: {
+                    ar: "دمج مبادئ الاستدامة في العمليات الإنتاجية",
+                    en: "Integrating sustainability principles into production operations"
+                },
+                content: {
+                    ar: `
+                        <h3>الاستدامة في العمليات</h3>
+                        <p>دمج الاعتبارات البيئية والاجتماعية والاقتصادية في تصميم وإدارة العمليات الإنتاجية.</p>
+                        
+                        <h3>أبعاد الاستدامة:</h3>
+                        <ul>
+                            <li data-detail="environmental">البعد البيئي - تقليل الأثر البيئي</li>
+                            <li data-detail="social">البعد الاجتماعي - المسؤولية تجاه المجتمع</li>
+                            <li data-detail="economic">البعد الاقتصادي - الربحية المستدامة</li>
+                            <li data-detail="energy">كفاءة الطاقة</li>
+                            <li data-detail="waste">إدارة النفايات</li>
+                        </ul>
+                    `,
+                    en: `
+                        <h3>Sustainability in Operations</h3>
+                        <p>Integrating environmental, social, and economic considerations into the design and management of production operations.</p>
+                        
+                        <h3>Sustainability Dimensions:</h3>
+                        <ul>
+                            <li data-detail="environmental">Environmental Dimension - Reducing environmental impact</li>
+                            <li data-detail="social">Social Dimension - Responsibility towards society</li>
+                            <li data-detail="economic">Economic Dimension - Sustainable profitability</li>
+                            <li data-detail="energy">Energy Efficiency</li>
+                            <li data-detail="waste">Waste Management</li>
+                        </ul>
+                    `
+                },
+                details: {
+                    // تفاصيل موسعة لكل نقطة
+                }
+            }
+        ];
+
+        // وظائف JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            const cardsContainer = document.getElementById('cardsContainer');
+            const langButtons = document.querySelectorAll('.lang-btn');
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            const searchBoxes = document.querySelectorAll('.search-box');
+            const detailOverlay = document.getElementById('detailOverlay');
+            const closeDetail = document.getElementById('closeDetail');
+            const detailTitle = document.getElementById('detailTitle');
+            const detailBody = document.getElementById('detailBody');
+            
+            let currentLang = 'ar';
+            let currentCategory = 'all';
+            let currentSearch = '';
+            
+            // إنشاء البطاقات
+            function createCards() {
+                cardsContainer.innerHTML = '';
+                
+                const filteredCards = cardsData.filter(card => {
+                    const matchesCategory = currentCategory === 'all' || card.category === currentCategory;
+                    const matchesSearch = currentSearch === '' || 
+                        card.title[currentLang].toLowerCase().includes(currentSearch) ||
+                        card.description[currentLang].toLowerCase().includes(currentSearch) ||
+                        card.content[currentLang].toLowerCase().includes(currentSearch);
+                    
+                    return matchesCategory && matchesSearch;
+                });
+                
+                if (filteredCards.length === 0) {
+                    const noResults = document.createElement('div');
+                    noResults.className = 'no-results';
+                    noResults.textContent = currentLang === 'ar' ? 'لا توجد نتائج' : 'No results found';
+                    cardsContainer.appendChild(noResults);
+                    return;
+                }
+                
+                filteredCards.forEach(card => {
+                    const cardElement = document.createElement('div');
+                    cardElement.className = 'card';
+                    cardElement.setAttribute('data-category', card.category);
+                    
+                    cardElement.innerHTML = `
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <div class="card-category">${getCategoryName(card.category, currentLang)}</div>
+                                <div class="card-icon">${card.icon}</div>
+                                <div class="card-title">${card.title[currentLang]}</div>
+                                <div class="card-description">${card.description[currentLang]}</div>
+                            </div>
+                            <div class="card-back">
+                                <div class="card-content">${card.content[currentLang]}</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    cardElement.addEventListener('click', function(e) {
+                        if (!e.target.closest('li[data-detail]')) {
+                            this.classList.toggle('flipped');
+                        }
+                    });
+                    
+                    // إضافة مستمعي الأحداث لعناصر التفاصيل
+                    setTimeout(() => {
+                        const detailItems = cardElement.querySelectorAll('li[data-detail]');
+                        detailItems.forEach(item => {
+                            item.addEventListener('click', function(e) {
+                                e.stopPropagation();
+                                const detailKey = this.getAttribute('data-detail');
+                                showDetail(card.id, detailKey);
+                            });
+                        });
+                    }, 100);
+                    
+                    cardsContainer.appendChild(cardElement);
+                });
+            }
+            
+            // عرض التفاصيل
+            function showDetail(cardId, detailKey) {
+                const card = cardsData.find(c => c.id === cardId);
+                if (card && card.details && card.details[detailKey]) {
+                    const detail = card.details[detailKey][currentLang];
+                    detailTitle.textContent = detail.title;
+                    detailBody.innerHTML = detail.content;
+                    detailOverlay.style.display = 'flex';
+                } else {
+                    // عرض رسالة افتراضية إذا لم تكن هناك تفاصيل محددة
+                    detailTitle.textContent = currentLang === 'ar' ? 'تفاصيل إضافية' : 'Additional Details';
+                    detailBody.innerHTML = currentLang === 'ar' 
+                        ? `<p>سيتم إضافة التفاصيل الكاملة لهذا الموضوع قريباً.</p>`
+                        : `<p>Full details for this topic will be added soon.</p>`;
+                    detailOverlay.style.display = 'flex';
+                }
+            }
+            
+            // إغلاق التفاصيل
+            closeDetail.addEventListener('click', function() {
+                detailOverlay.style.display = 'none';
+            });
+            
+            detailOverlay.addEventListener('click', function(e) {
+                if (e.target === detailOverlay) {
+                    detailOverlay.style.display = 'none';
+                }
+            });
+            
+            // الحصول على اسم التصنيف باللغة المحددة
+            function getCategoryName(category, lang) {
+                const categories = {
+                    management: { ar: 'الإدارة', en: 'Management' },
+                    quality: { ar: 'الجودة', en: 'Quality' },
+                    productivity: { ar: 'الإنتاجية', en: 'Productivity' },
+                    improvement: { ar: 'التطوير', en: 'Improvement' },
+                    tools: { ar: 'الأدوات', en: 'Tools' },
+                    maintenance: { ar: 'الصيانة', en: 'Maintenance' }
+                };
+                
+                return categories[category] ? categories[category][lang] : category;
+            }
+            
+            // تبديل اللغة
+            function switchLanguage(lang) {
+                currentLang = lang;
+                
+                // تحديث الأزرار
+                langButtons.forEach(btn => {
+                    if (btn.dataset.lang === lang) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                
+                // تحديث النصوص
+                document.querySelectorAll('.ar').forEach(el => {
+                    el.style.display = lang === 'ar' ? 'block' : 'none';
+                });
+                
+                document.querySelectorAll('.en').forEach(el => {
+                    el.style.display = lang === 'en' ? 'block' : 'none';
+                });
+                
+                // تحديث أسماء التصنيفات
+                categoryButtons.forEach(btn => {
+                    const category = btn.dataset.category;
+                    if (category !== 'all') {
+                        btn.textContent = getCategoryName(category, lang);
+                    } else {
+                        btn.textContent = lang === 'ar' ? 'الكل' : 'All';
+                    }
+                });
+                
+                // تحديث مكان البحث
+                searchBoxes.forEach(box => {
+                    box.placeholder = lang === 'ar' ? 'ابحث في البطاقات التعليمية...' : 'Search in educational cards...';
+                });
+                
+                // إعادة إنشاء البطاقات باللغة الجديدة
+                createCards();
+            }
+            
+            // تغيير التصنيف
+            function changeCategory(category) {
+                currentCategory = category;
+                
+                // تحديث الأزرار
+                categoryButtons.forEach(btn => {
+                    if (btn.dataset.category === category) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                
+                // إعادة إنشاء البطاقات بالتصنيف الجديد
+                createCards();
+            }
+            
+            // البحث
+            function handleSearch(searchTerm) {
+                currentSearch = searchTerm.toLowerCase();
+                createCards();
+            }
+            
+            // إضافة مستمعي الأحداث لأزرار اللغة
+            langButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    switchLanguage(this.dataset.lang);
+                });
+            });
+            
+            // إضافة مستمعي الأحداث لأزرار التصنيفات
+            categoryButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    changeCategory(this.dataset.category);
+                });
+            });
+            
+            // إضافة مستمعي الأحداث لحقول البحث
+            searchBoxes.forEach(box => {
+                box.addEventListener('input', function() {
+                    handleSearch(this.value);
+                });
+            });
+            
+            // تهيئة البرنامج
+            createCards();
+        });
+    </script>
+</body>
+</html>
